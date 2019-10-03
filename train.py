@@ -28,6 +28,9 @@ def train(args, unmix, device, train_sampler, optimizer):
         optimizer.zero_grad()
         Y_hat = unmix(x)
         Y = unmix.transform(y)
+		# note 25/09 add Y to temporal signal
+		# loss = PEASS (Y_hat,Y)
+		# idée = PEASS + 0.1 MSE
         loss = torch.nn.functional.mse_loss(Y_hat, Y)
         loss.backward()
         optimizer.step()
@@ -235,7 +238,7 @@ def main():
         train_times = []
         best_epoch = 0
 
-    for epoch in t:
+    for epoch in t: # note du 25/09 : if epochs < N change loss , éventuellement repartir de leur poids préappris
         t.set_description("Training Epoch")
         end = time.time()
         train_loss = train(args, unmix, device, train_sampler, optimizer)
